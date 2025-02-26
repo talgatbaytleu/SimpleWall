@@ -10,9 +10,8 @@ import (
 )
 
 func ResponseErrorJson(err error, w http.ResponseWriter) {
-	statusCode := http.StatusInternalServerError // 500 по умолчанию
+	statusCode := http.StatusInternalServerError // 500
 
-	// Определяем статус-код в зависимости от типа ошибки
 	switch err {
 	case apperrors.ErrNotFound:
 		statusCode = http.StatusNotFound // 404
@@ -24,11 +23,12 @@ func ResponseErrorJson(err error, w http.ResponseWriter) {
 		statusCode = http.StatusBadRequest // 400
 	}
 
-	// Логируем ошибку в stderr
 	log.SetOutput(os.Stderr)
 	log.Println(err)
 
-	// Отправляем JSON-ответ
-	jsonData, _ := json.MarshalIndent(map[string]string{"error": err.Error()}, "", " ")
-	http.Error(w, string(jsonData), statusCode)
+	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(statusCode)
+
+	jsonData, _ := json.Marshal(map[string]string{"error": err.Error()})
+	w.Write(jsonData)
 }
