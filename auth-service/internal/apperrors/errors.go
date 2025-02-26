@@ -1,30 +1,19 @@
 package apperrors
 
 import (
-	"encoding/json"
 	"errors"
-	"net/http"
 )
 
 var (
-	ErrNotFound      = errors.New("NOT found")
-	ErrNoJwtSecret   = errors.New("JWT_SECRET in not set")
-	ErrInvalidToken  = errors.New("invalid token")
-	ErrExpiredToken  = errors.New("expired token")
-	ErrIncorrectPswd = errors.New("incorrect user or password")
+	ErrNotFound        = errors.New("NOT found")
+	ErrNoJwtSecret     = errors.New("JWT_SECRET not set")
+	ErrInvalidToken    = errors.New("invalid token")
+	ErrExpiredToken    = errors.New("expired token")
+	ErrIncorrectPswd   = errors.New("incorrect user or password")
+	ErrInvalidPassword = errors.New(
+		"password must be at least 8 characters long, include one uppercase letter, one lowercase letter, one digit, and one special character",
+	)
+	ErrInvalidUsername = errors.New(
+		"username must be 3-20 characters long and contain only letters, numbers, underscores, or dashes",
+	)
 )
-
-type myErrorType struct {
-	ErrorMessage string `json:"error"`
-}
-
-func ResponseErrorJson(err error, w http.ResponseWriter) {
-	var errStruct myErrorType
-	var statusCode int = 400
-	errStruct.ErrorMessage = err.Error()
-
-	// specify appropriate statusCode
-
-	jsonData, _ := json.MarshalIndent(errStruct, "", " ")
-	http.Error(w, string(jsonData), statusCode)
-}

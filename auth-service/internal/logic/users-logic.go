@@ -33,6 +33,18 @@ func (l *userLogic) CreateUser(body io.Reader) error {
 		return err
 	}
 
+	// Validate username
+	err = utils.ValidateUsername(user.Username)
+	if err != nil {
+		return err
+	}
+
+	// Validate password
+	err = utils.ValidatePassword(user.Password)
+	if err != nil {
+		return err
+	}
+
 	user.PasswordHash, err = utils.HashPassword(user.Password)
 	if err != nil {
 		return err

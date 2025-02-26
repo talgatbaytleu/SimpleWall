@@ -7,6 +7,7 @@ import (
 
 	"auth-service/internal/dal"
 	"auth-service/internal/handler"
+	"auth-service/internal/middleware"
 )
 
 func main() {
@@ -19,9 +20,8 @@ func Run() {
 	dal.InitializeDB(dbURL)
 	defer dal.CloseDB()
 
-	// mux := handler.SetupServer()
-	handler.InitServer()
+	mux := handler.InitServer()
 
 	fmt.Println("Server started on port: 8081")
-	log.Fatal(http.ListenAndServe(":8081", nil))
+	log.Fatal(http.ListenAndServe(":8081", middleware.RecoverMiddleware(mux)))
 }
