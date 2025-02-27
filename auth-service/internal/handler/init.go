@@ -6,6 +6,7 @@ import (
 	"auth-service/internal/apperrors"
 	"auth-service/internal/dal"
 	"auth-service/internal/logic"
+	"auth-service/utils"
 )
 
 func InitServer() *http.ServeMux {
@@ -23,5 +24,5 @@ func InitServer() *http.ServeMux {
 }
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {
-	apperrors.ResponseErrorJson(apperrors.ErrNotFound, w)
+	utils.ResponseErrorJson(apperrors.ErrNotFound, w)
 }

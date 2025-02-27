@@ -1,7 +1,6 @@
 package utils
 
 import (
-	"fmt"
 	"os"
 	"strconv"
 	"time"
@@ -31,33 +30,33 @@ func GenerateJWT(userID int) (string, error) {
 
 func ValidateJWT(tokenString string) (string, error) {
 	jwtSecret := os.Getenv("JWT_SECRET")
-
 	if jwtSecret == "" {
-		return jwtSecret, apperrors.ErrNoJwtSecret
+		return "", jwt.ErrTokenMalformed // или просто return "", errors.New("JWT_SECRET not set")
 	}
+
 	token, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
 		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-			return nil, apperrors.ErrInvalidToken
+			return nil, jwt.ErrSignatureInvalid
 		}
 		return []byte(jwtSecret), nil
 	})
 	if err != nil {
-		return "", apperrors.ErrInvalidToken
+		return "", err // Возвращаем ошибку как есть
 	}
 
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		if exp, ok := claims["exp"].(float64); ok {
-			fmt.Println("Token exp:", exp)
-			fmt.Println("Current time:", time.Now().Unix())
-			if time.Now().Unix() > int64(exp) {
-				return "", apperrors.ErrExpiredToken
-			}
-		}
-
-		if userID, ok := claims["user_id"].(string); ok {
-			return userID, nil
-		}
+	if !token.Valid {
+		return "", jwt.ErrTokenMalformed
 	}
 
-	return "", apperrors.ErrInvalidToken
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if !ok {
+		return "", jwt.ErrTokenMalformed
+	}
+
+	userID, ok := claims["user_id"].(string)
+	if !ok {
+		return "", jwt.ErrTokenMalformed
+	}
+
+	return userID, nil
 }

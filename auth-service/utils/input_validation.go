@@ -2,20 +2,35 @@ package utils
 
 import (
 	"regexp"
+	"unicode"
 
 	"auth-service/internal/apperrors"
 )
 
 func ValidatePassword(password string) error {
-	passwordRegex := `^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[\W_]).{8,}$`
-	matched, err := regexp.MatchString(passwordRegex, password)
-	if err != nil {
-		return err
-	}
-
-	if !matched {
+	if len(password) < 8 {
 		return apperrors.ErrInvalidPassword
 	}
+
+	var hasUpper, hasLower, hasDigit, hasSpecial bool
+
+	for _, char := range password {
+		switch {
+		case unicode.IsUpper(char):
+			hasUpper = true
+		case unicode.IsLower(char):
+			hasLower = true
+		case unicode.IsDigit(char):
+			hasDigit = true
+		case unicode.IsPunct(char) || unicode.IsSymbol(char):
+			hasSpecial = true
+		}
+	}
+
+	if !hasUpper || !hasLower || !hasDigit || !hasSpecial {
+		return apperrors.ErrInvalidPassword
+	}
+
 	return nil
 }
 
