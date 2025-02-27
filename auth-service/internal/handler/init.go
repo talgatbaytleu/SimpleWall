@@ -11,7 +11,7 @@ import (
 
 func InitServer() *http.ServeMux {
 	mux := http.NewServeMux()
-	userDal := dal.NewUserDal()
+	userDal := dal.NewUserDal(dal.MainDB)
 	userLogic := logic.NewUserLogic(userDal)
 	userHandler := NewUserHandler(userLogic)
 
