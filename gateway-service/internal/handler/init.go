@@ -1,6 +1,10 @@
 package handler
 
-import "net/http"
+import (
+	"gateway/pkg/apperrors"
+	"gateway/pkg/utils"
+	"net/http"
+)
 
 func InitServer() *http.ServeMux {
 	mux := http.NewServeMux()
