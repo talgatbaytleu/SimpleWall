@@ -14,7 +14,7 @@ var (
 	ctx    = context.Background()
 )
 
-func InitializeDB(dbURL string) {
+func InitDB(dbURL string) {
 	var err error
 	MainDB, err = pgxpool.New(ctx, dbURL)
 	if err != nil {

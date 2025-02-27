@@ -17,7 +17,7 @@ func main() {
 func Run() {
 	dbURL := "postgres://tbaitleu:talgat9595@localhost:5432/sw_users_auth"
 
-	dal.InitializeDB(dbURL)
+	dal.InitDB(dbURL)
 	defer dal.CloseDB()
 
 	mux := handler.InitServer()
