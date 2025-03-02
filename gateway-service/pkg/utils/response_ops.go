@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"auth-service/internal/apperrors"
+	"gateway/pkg/apperrors"
 )
 
 func ResponseErrorJson(err error, w http.ResponseWriter) {

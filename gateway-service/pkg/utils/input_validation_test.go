@@ -3,7 +3,7 @@ package utils
 import (
 	"testing"
 
-	"auth-service/internal/apperrors"
+	"gateway/pkg/apperrors"
 )
 
 func TestValidatePassword(t *testing.T) {

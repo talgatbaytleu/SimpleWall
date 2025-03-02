@@ -4,6 +4,9 @@ import (
 	"fmt"
 	"log"
 	"net/http"
+
+	"gateway/internal/middleware"
+	"gateway/internal/router"
 )
 
 func main() {
@@ -11,8 +14,8 @@ func main() {
 }
 
 func Run() {
-	mux := handler.InitServer()
+	mux := router.InitServer()
 
-	fmt.Println("Server started on port: 8081")
-	log.Fatal(http.ListenAndServe(":8081", middleware.RecoverMiddleware(mux)))
+	fmt.Println("Server started on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", middleware.RecoverMiddleware(mux)))
 }
