@@ -5,10 +5,10 @@ import (
 	"fmt"
 	"io"
 
-	"auth-service/internal/apperrors"
 	"auth-service/internal/dal"
-	"auth-service/models"
-	"auth-service/utils"
+	"auth-service/pkg/apperrors"
+	"auth-service/pkg/models"
+	"auth-service/pkg/utils"
 )
 
 type UserLogicInterface interface {

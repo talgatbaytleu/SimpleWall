@@ -4,7 +4,7 @@ import (
 	"regexp"
 	"unicode"
 
-	"auth-service/internal/apperrors"
+	"auth-service/pkg/apperrors"
 )
 
 func ValidatePassword(password string) error {

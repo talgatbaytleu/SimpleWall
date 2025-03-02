@@ -7,7 +7,7 @@ import (
 
 	"github.com/golang-jwt/jwt/v5"
 
-	"auth-service/internal/apperrors"
+	"auth-service/pkg/apperrors"
 )
 
 func GenerateJWT(userID int) (string, error) {

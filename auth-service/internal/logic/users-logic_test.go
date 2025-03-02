@@ -7,7 +7,7 @@ import (
 	"testing"
 
 	"auth-service/internal/dal"
-	"auth-service/models"
+	"auth-service/pkg/models"
 )
 
 var urlTestDB = "postgres://tbaitleu:talgat9595@localhost:5432/sw_users_auth_test"

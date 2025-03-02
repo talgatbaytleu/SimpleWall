@@ -8,7 +8,7 @@ import (
 	"strings"
 
 	"auth-service/internal/logic"
-	"auth-service/utils"
+	"auth-service/pkg/utils"
 )
 
 type userHandler struct {

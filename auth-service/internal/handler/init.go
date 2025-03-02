@@ -3,10 +3,10 @@ package handler
 import (
 	"net/http"
 
-	"auth-service/internal/apperrors"
 	"auth-service/internal/dal"
 	"auth-service/internal/logic"
-	"auth-service/utils"
+	"auth-service/pkg/apperrors"
+	"auth-service/pkg/utils"
 )
 
 func InitServer() *http.ServeMux {

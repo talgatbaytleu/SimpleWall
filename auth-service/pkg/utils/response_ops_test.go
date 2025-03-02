@@ -7,7 +7,7 @@ import (
 	"net/http/httptest"
 	"testing"
 
-	"auth-service/internal/apperrors"
+	"auth-service/pkg/apperrors"
 )
 
 var errTest = errors.New("test error")
