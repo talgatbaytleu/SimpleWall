@@ -19,9 +19,11 @@ func InitServer() *http.ServeMux {
 	mux.HandleFunc("POST /registrate", handler.HandleAuthService)
 	mux.HandleFunc("POST /login", handler.HandleAuthService)
 	mux.HandleFunc("/post", handler.HandlePostService)
+	mux.HandleFunc("/post/{pattern}", handler.HandlePostService)
 	mux.HandleFunc("/like", handler.HandleLikeService)
-	mux.HandleFunc("/comment", handler.HandleCommentService)
+	mux.HandleFunc("/comment/{pattern}", handler.HandleCommentService)
 	mux.HandleFunc("/wall", handler.HandleWallService)
+	mux.HandleFunc("/wall/{pattern}", handler.HandleWallService)
 	mux.HandleFunc("/", handler.NotFoundHandler)
 
 	return mux
