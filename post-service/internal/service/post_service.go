@@ -7,17 +7,14 @@ import (
 	"strconv"
 
 	"poster/internal/dal"
-	"poster/internal/router"
 	"poster/pkg/apperrors"
 	"poster/pkg/models"
 	"poster/pkg/utils"
 )
 
-var s3url = "http://localhost:8086/" // SHOULD BE IN .env!!!
-
 type PostServiceInterface interface {
 	CreatePost(imageFile io.ReadCloser, description string, user_idStr string) error
-	RetrievePost(post_idStr string) (*string, error)
+	RetrievePost(post_idStr string) (*io.ReadCloser, *string, error)
 	UpdatePost(
 		imageFile io.ReadCloser,
 		description string,
@@ -44,15 +41,16 @@ func (s *postService) CreatePost(
 	if err != nil {
 		return err
 	}
+
 	// Creating a bucket on S3, ignore if it already exist
 	s3reqUrl := s3url + "bucket" + user_idStr
-	_, err = router.SendRequest("PUT", &s3reqUrl, nil)
+	_, err = SendRequest("PUT", &s3reqUrl, http.NoBody)
 
 	// Creating image on S3
 	image_url := utils.GenUniqueString()
 	s3reqUrl = s3url + "bucket" + user_idStr + image_url
 
-	resp, err := router.SendRequest("PUT", &s3reqUrl, &imageFile)
+	resp, err := SendRequest("PUT", &s3reqUrl, imageFile)
 	if err != nil {
 		return err
 	}
@@ -63,7 +61,7 @@ func (s *postService) CreatePost(
 
 	defer func() {
 		if err != nil {
-			router.SendRequest("DELETE", &s3reqUrl, &imageFile)
+			SendRequest("DELETE", &s3reqUrl, imageFile)
 		}
 	}()
 
@@ -75,18 +73,28 @@ func (s *postService) CreatePost(
 	return nil
 }
 
-func (s *postService) RetrievePost(post_idStr string) (*string, error) {
+func (s *postService) RetrievePost(post_idStr string) (*io.ReadCloser, *string, error) {
 	post_id, err := strconv.Atoi(post_idStr)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
+	// Getting ImageLink from DB
 	jsonPostPtr, err := s.postDal.SelectPost(post_id)
 	if err != nil {
-		return nil, err
+		return nil, nil, err
 	}
 
-	return jsonPostPtr, nil
+	// Unmarshal to struct
+	var postStruct models.PostType
+	err = json.Unmarshal([]byte(*jsonPostPtr), &postStruct)
+
+	// Getting imageFile from S3
+	user_id := strconv.Itoa(postStruct.UserID)
+	s3reqUrl := s3url + user_id + postStruct.ImageLink
+	resp, err := SendRequest("GET", &s3reqUrl, nil)
+
+	return &resp.Body, &postStruct.ImageLink, nil
 }
 
 func (s *postService) UpdatePost(
@@ -123,7 +131,7 @@ func (s *postService) UpdatePost(
 	s3reqUrl := s3url + user_idStr + image_url
 
 	// Creating new image on S3
-	resp, err := router.SendRequest("PUT", &s3reqUrl, &imageFile)
+	resp, err := SendRequest("PUT", &s3reqUrl, imageFile)
 	if err != nil {
 		return err
 	}
@@ -135,7 +143,7 @@ func (s *postService) UpdatePost(
 	// Rollback S3 and DB data if any error occurres
 	defer func() {
 		if err != nil {
-			router.SendRequest("DELETE", &s3reqUrl, &imageFile)
+			SendRequest("DELETE", &s3reqUrl, imageFile)
 			s.postDal.UpdateTable(user_id, post_id, postStruct.Description, postStruct.ImageLink)
 		}
 	}()
@@ -148,7 +156,7 @@ func (s *postService) UpdatePost(
 
 	// Deleting image from S3
 	s3reqUrl = s3url + user_idStr + postStruct.ImageLink
-	resp, err = router.SendRequest("DELETE", &s3reqUrl, nil)
+	resp, err = SendRequest("DELETE", &s3reqUrl, http.NoBody)
 	if err != nil {
 		return err
 	}
@@ -183,7 +191,7 @@ func (s *postService) RemovePost(user_idStr string, post_idStr string) error {
 	s3reqUrl := s3url + user_idStr + postStruct.ImageLink
 
 	// Saving old image for Rollback
-	oldImageResp, err := router.SendRequest("GET", &s3reqUrl, nil)
+	oldImageResp, err := SendRequest("GET", &s3reqUrl, http.NoBody)
 	if err != nil {
 		return nil
 	}
@@ -193,7 +201,7 @@ func (s *postService) RemovePost(user_idStr string, post_idStr string) error {
 	// }
 
 	// Deleting image from S3
-	resp, err := router.SendRequest("DELETE", &s3reqUrl, nil)
+	resp, err := SendRequest("DELETE", &s3reqUrl, http.NoBody)
 	if err != nil {
 		return err
 	}
@@ -205,7 +213,7 @@ func (s *postService) RemovePost(user_idStr string, post_idStr string) error {
 	// Rollback S3 image
 	defer func() {
 		if err != nil {
-			router.SendRequest("PUT", &s3reqUrl, &oldImageResp.Body)
+			SendRequest("PUT", &s3reqUrl, oldImageResp.Body)
 		}
 	}()
 

@@ -21,7 +21,7 @@ func NewPostDal(db *pgxpool.Pool) *postDal {
 
 func (d *postDal) InsertPost(user_id int, description string, imageLink string) error {
 	query := `INSERT INTO posts(user_id,description,image_link)
-            VALUES $1,$2,$3;`
+            VALUES ($1,$2,$3);`
 
 	_, err := d.DB.Exec(ctx, query, user_id, description, imageLink)
 	if err != nil {

@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"gateway/pkg/apperrors"
+	"poster/pkg/apperrors"
 )
 
 func ResponseErrorJson(err error, w http.ResponseWriter) {
@@ -15,12 +15,12 @@ func ResponseErrorJson(err error, w http.ResponseWriter) {
 	switch err {
 	case apperrors.ErrNotFound:
 		statusCode = http.StatusNotFound // 404
-	case apperrors.ErrNoJwtSecret:
-		statusCode = http.StatusInternalServerError // 500
-	case apperrors.ErrInvalidToken, apperrors.ErrExpiredToken:
-		statusCode = http.StatusUnauthorized // 401
-	case apperrors.ErrIncorrectPswd, apperrors.ErrInvalidPassword, apperrors.ErrInvalidUsername:
-		statusCode = http.StatusBadRequest // 400
+		// case apperrors.ErrNoJwtSecret:
+		// 	statusCode = http.StatusInternalServerError // 500
+		// case apperrors.ErrInvalidToken, apperrors.ErrExpiredToken:
+		// 	statusCode = http.StatusUnauthorized // 401
+		// case apperrors.ErrIncorrectPswd, apperrors.ErrInvalidPassword, apperrors.ErrInvalidUsername:
+		// 	statusCode = http.StatusBadRequest // 400
 	}
 
 	log.SetOutput(os.Stderr)
