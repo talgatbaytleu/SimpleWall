@@ -53,7 +53,7 @@ func (d *postDal) UpdateTable(
 	imageLink string,
 ) error {
 	query := `UPDATE posts
-            SET description = $1, imageLink = $2
+            SET description = $1, image_link = $2
             WHERE post_id = $3 AND user_id = $4`
 
 	_, err := d.DB.Exec(ctx, query, description, imageLink, post_id, user_id)

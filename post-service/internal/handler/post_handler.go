@@ -1,6 +1,7 @@
 package handler
 
 import (
+	"encoding/json"
 	"net/http"
 
 	"poster/internal/service"
@@ -28,7 +29,7 @@ func (h *postHandler) PostPost(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 	}
 
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *postHandler) PutPost(w http.ResponseWriter, r *http.Request) {
@@ -49,11 +50,35 @@ func (h *postHandler) PutPost(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 	}
 
-	w.WriteHeader(200)
+	w.WriteHeader(http.StatusOK)
 }
 
 func (h *postHandler) GetPost(w http.ResponseWriter, r *http.Request) {
+	post_idStr, err := utils.GetURLVar(2, r.URL.Path)
+	if err != nil {
+		utils.ResponseErrorJson(err, w)
+	}
+
+	jsonData, err := h.postService.RetrievePost(post_idStr)
+	if err != nil {
+		utils.ResponseErrorJson(err, w)
+	}
+
+	w.Header().Set("Content-Type", "application/json")
+	json.NewEncoder(w).Encode(jsonData)
 }
 
 func (h *postHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
+	post_idStr, err := utils.GetURLVar(2, r.URL.Path)
+	if err != nil {
+		utils.ResponseErrorJson(err, w)
+	}
+	user_idStr := r.Header.Get("X-User-ID")
+
+	err = h.postService.RemovePost(user_idStr, post_idStr)
+	if err != nil {
+		utils.ResponseErrorJson(err, w)
+	}
+
+	w.WriteHeader(http.StatusNoContent)
 }
