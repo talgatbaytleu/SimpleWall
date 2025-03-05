@@ -54,7 +54,7 @@ func (d *likeDal) SelectLikeCount(post_id int) (*string, error) {
 	return &jsonPost, nil
 }
 
-func (d *likeDal) DeleteLike(user_id int, post_id int) error {
+func (d *likeDal) DeleteLike(post_id int, user_id int) error {
 	query := `DELETE FROM likes
             WHERE post_id = $1 AND user_id = $2`
 
