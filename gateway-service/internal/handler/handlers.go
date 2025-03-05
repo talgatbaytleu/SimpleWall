@@ -3,7 +3,6 @@ package handler
 import (
 	"encoding/json"
 	"errors"
-	"fmt"
 	"net/http"
 	"net/http/httputil"
 	"net/url"
@@ -46,13 +45,9 @@ func HandlePostService(w http.ResponseWriter, r *http.Request) {
 
 	r.Header.Set("X-User-ID", authReq.Header.Get("X-User-ID"))
 
-	fmt.Println(r.Header.Get("X-User-ID"))
-
 	targetURL, _ := url.Parse("http://localhost:8082")
-	fmt.Println("url parsed")
 
 	proxy := httputil.NewSingleHostReverseProxy(targetURL)
-	fmt.Println("proxy created")
 
 	proxy.ServeHTTP(w, r)
 }
@@ -64,13 +59,13 @@ func HandleLikeService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var errMessage map[string]string
-	err = json.NewDecoder(authReq.Body).Decode(&errMessage)
-	if err != nil {
-		return
-	}
-
 	if authReq.StatusCode != http.StatusOK {
+		var errMessage map[string]string
+		err = json.NewDecoder(authReq.Body).Decode(&errMessage)
+		if err != nil {
+			utils.ResponseErrorJson(err, w)
+			return
+		}
 		w.WriteHeader(authReq.StatusCode)
 		utils.ResponseErrorJson(errors.New(errMessage["error"]), w)
 		return
@@ -92,13 +87,13 @@ func HandleCommentService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var errMessage map[string]string
-	err = json.NewDecoder(authReq.Body).Decode(&errMessage)
-	if err != nil {
-		return
-	}
-
 	if authReq.StatusCode != http.StatusOK {
+		var errMessage map[string]string
+		err = json.NewDecoder(authReq.Body).Decode(&errMessage)
+		if err != nil {
+			utils.ResponseErrorJson(err, w)
+			return
+		}
 		w.WriteHeader(authReq.StatusCode)
 		utils.ResponseErrorJson(errors.New(errMessage["error"]), w)
 		return
@@ -120,13 +115,13 @@ func HandleWallService(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	var errMessage map[string]string
-	err = json.NewDecoder(authReq.Body).Decode(&errMessage)
-	if err != nil {
-		return
-	}
-
 	if authReq.StatusCode != http.StatusOK {
+		var errMessage map[string]string
+		err = json.NewDecoder(authReq.Body).Decode(&errMessage)
+		if err != nil {
+			utils.ResponseErrorJson(err, w)
+			return
+		}
 		w.WriteHeader(authReq.StatusCode)
 		utils.ResponseErrorJson(errors.New(errMessage["error"]), w)
 		return
