@@ -1,6 +1,10 @@
 package dal
 
 import (
+	"errors"
+	"fmt"
+
+	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"liker/pkg/apperrors"
@@ -8,7 +12,8 @@ import (
 
 type LikeDalInterface interface {
 	InsertLike(post_id int, user_id int) error
-	SelectLikeCount(post_id int) (*string, error)
+	SelectLikesCount(post_id int) (string, error)
+	SelectLikesList(post_id int) (string, error)
 	DeleteLike(post_id int, user_id int) error
 }
 
@@ -32,26 +37,54 @@ func (d *likeDal) InsertLike(post_id int, user_id int) error {
 	return nil
 }
 
-func (d *likeDal) SelectLikeCount(post_id int) (*string, error) {
-	var jsonPost string
+func (d *likeDal) SelectLikesCount(post_id int) (string, error) {
+	var jsonPost *string
 
 	query := `SELECT to_jsonb(
               json_build_object(
-                'post_id', post_id,
-                'like_count', COUNT(user_id)
+                'post_id', l.post_id,
+                'like_count', COUNT(l.user_id)
               )
             ) AS result
-            FROM likes
-            WHERE post_id = $1
-            GROUP BY post_id;
+            FROM likes l
+            WHERE l.post_id = $1
+            GROUP BY l.post_id;
 `
 
 	err := d.DB.QueryRow(ctx, query, post_id).Scan(&jsonPost)
 	if err != nil {
-		return &jsonPost, err
+		if err == pgx.ErrNoRows || errors.Is(err, pgx.ErrNoRows) ||
+			err.Error() == "no rows in result set" {
+			// If there are no likes, return a valid empty JSON response
+			return `{"post_id":` + fmt.Sprintf("%d", post_id) + `,"like_count":0}`, nil
+		}
+		return "", err
 	}
 
-	return &jsonPost, nil
+	if jsonPost == nil {
+		return `{"post_id":` + fmt.Sprintf("%d", post_id) + `,"like_count":0}`, nil
+	}
+
+	return *jsonPost, nil
+}
+
+func (d *likeDal) SelectLikesList(post_id int) (string, error) {
+	var jsonPost *string
+
+	query := `SELECT jsonb_agg(likes)
+            FROM likes
+            WHERE post_id = $1;`
+
+	err := d.DB.QueryRow(ctx, query, post_id).Scan(&jsonPost)
+	if err != nil {
+		return *jsonPost, err
+	}
+
+	if jsonPost == nil {
+		return "[]", nil
+	}
+
+	return *jsonPost, nil
 }
 
 func (d *likeDal) DeleteLike(post_id int, user_id int) error {

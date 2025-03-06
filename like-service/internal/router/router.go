@@ -15,9 +15,10 @@ func InitServer() *http.ServeMux {
 	likeService := service.NewLikeService(likeDal)
 	likeHandler := handler.NewLikeHandler(likeService)
 
-	mux.HandleFunc("POST /like/{post_id}", likeHandler.PostLike)
-	mux.HandleFunc("GET /like/{post_id}", likeHandler.GetLike)
-	mux.HandleFunc("DELETE /like/{post_id}", likeHandler.DeleteLike)
+	mux.HandleFunc("POST /like", likeHandler.PostLike)
+	mux.HandleFunc("GET /likes/count", likeHandler.GetLikesCount)
+	mux.HandleFunc("GET /likes", likeHandler.GetLikesList)
+	mux.HandleFunc("DELETE /like", likeHandler.DeleteLike)
 	mux.HandleFunc("/", handler.NotFoundHandler)
 
 	return mux
