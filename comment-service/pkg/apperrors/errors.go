@@ -10,4 +10,5 @@ var (
 	ErrCommentNotDeleted = errors.New("comment-service: dal: comment NOT deleted")
 	ErrCommentNotCreated = errors.New("comment-service: dal: comment NOT created")
 	ErrCommentNotUpdated = errors.New("comment-service: dal: comment NOT updated")
+	ErrNoPostId          = errors.New("comment-service: handler: post_id is required")
 )

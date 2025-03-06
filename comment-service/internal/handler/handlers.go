@@ -4,8 +4,8 @@ import (
 	"fmt"
 	"net/http"
 
-	"poster/pkg/apperrors"
-	"poster/pkg/utils"
+	"commenter/pkg/apperrors"
+	"commenter/pkg/utils"
 )
 
 func NotFoundHandler(w http.ResponseWriter, r *http.Request) {

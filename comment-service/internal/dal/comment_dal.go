@@ -7,10 +7,12 @@ import (
 )
 
 type CommentDalInterface interface {
-	InsertComment(post_id int, user_id int, content *string) error
-	UpdateComment(comment_id int, content *string) error
-	SelectComment(comment_id int) (*string, error)
+	InsertComment(post_id int, user_id int, content string) error
+	UpdateComment(comment_id int, content string) error
+	SelectComment(comment_id int) (string, error)
+	SelectPostComments(post_id int) (string, error)
 	DeleteComment(comment_id int, user_id int) error
+	SelectUserOfComment(comment_id int) (int, error)
 }
 
 type commentDal struct {
@@ -21,7 +23,7 @@ func NewCommentDal(db *pgxpool.Pool) *commentDal {
 	return &commentDal{DB: db}
 }
 
-func (d *commentDal) InsertComment(post_id int, user_id int, content *string) error {
+func (d *commentDal) InsertComment(post_id int, user_id int, content string) error {
 	query := `INSERT INTO comments(post_id,user_id,content)
             VALUES ($1,$2,$3);`
 
@@ -37,8 +39,8 @@ func (d *commentDal) InsertComment(post_id int, user_id int, content *string) er
 	return nil
 }
 
-func (d *commentDal) UpdateComment(comment_id int, content *string) error {
-	query := `UPDATE TABLE comments
+func (d *commentDal) UpdateComment(comment_id int, content string) error {
+	query := `UPDATE comments
             SET content = $2
             WHERE comment_id = $1;`
 
@@ -54,7 +56,7 @@ func (d *commentDal) UpdateComment(comment_id int, content *string) error {
 	return nil
 }
 
-func (d *commentDal) SelectComment(comment_id int) (*string, error) {
+func (d *commentDal) SelectComment(comment_id int) (string, error) {
 	var jsonPost string
 
 	query := `SELECT to_json(comments)
@@ -63,10 +65,26 @@ func (d *commentDal) SelectComment(comment_id int) (*string, error) {
 
 	err := d.DB.QueryRow(ctx, query, comment_id).Scan(&jsonPost)
 	if err != nil {
-		return &jsonPost, err
+		return "", err
 	}
 
-	return &jsonPost, nil
+	return jsonPost, nil
+}
+
+func (d commentDal) SelectPostComments(post_id int) (string, error) {
+	var jsonPost string
+	query := `SELECT COALESCE(jsonb_agg(comments), '[]'::jsonb)
+            FROM comments
+            WHERE post_id = $1;
+
+  `
+
+	err := d.DB.QueryRow(ctx, query, post_id).Scan(&jsonPost)
+	if err != nil {
+		return "", err
+	}
+
+	return jsonPost, nil
 }
 
 func (d *commentDal) DeleteComment(comment_id int, user_id int) error {
@@ -83,4 +101,14 @@ func (d *commentDal) DeleteComment(comment_id int, user_id int) error {
 	}
 
 	return nil
+}
+
+func (d *commentDal) SelectUserOfComment(comment_id int) (int, error) {
+	var user_id int
+	query := `SELECT user_id FROM comments
+            WHERE comment_id = $1;`
+
+	err := d.DB.QueryRow(ctx, query, comment_id).Scan(&user_id)
+
+	return user_id, err
 }
