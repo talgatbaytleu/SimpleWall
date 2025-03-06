@@ -8,22 +8,25 @@ import (
 
 func InitServer() *http.ServeMux {
 	mux := http.NewServeMux()
-	// userDal := dal.NewUserDal(dal.MainDB)
-	// userLogic := logic.NewUserLogic(userDal)
-	// userHandler := NewUserHandler(userLogic)
-	//
-	// mux.HandleFunc("POST /registrate", userHandler.RegistrateUser)
-	// mux.HandleFunc("POST /login", userHandler.LoginUser)
-	// mux.HandleFunc("GET /validate", userHandler.CheckToken)
 
+	// Auth-service routes
 	mux.HandleFunc("POST /registrate", handler.HandleAuthService)
 	mux.HandleFunc("POST /login", handler.HandleAuthService)
+	// Post-service routes
 	mux.HandleFunc("/post", handler.HandlePostService)
 	mux.HandleFunc("/post/{pattern}", handler.HandlePostService)
+	// Like-service routes
+	mux.HandleFunc("/like", handler.HandleLikeService)
 	mux.HandleFunc("/like/{pattern}", handler.HandleLikeService)
+	mux.HandleFunc("/likes/{pattern}", handler.HandleLikeService)
+	// Comment-service routes
+	mux.HandleFunc("/comment", handler.HandleCommentService)
 	mux.HandleFunc("/comment/{pattern}", handler.HandleCommentService)
-	// mux.HandleFunc("/wall", handler.HandleWallService)
-	mux.HandleFunc("/wall/{pattern}", handler.HandleWallService)
+	mux.HandleFunc("/comments", handler.HandleCommentService)
+	// Wall-service routes
+	mux.HandleFunc("/wall", handler.HandleWallService)
+
+	// Not Allowed Routes
 	mux.HandleFunc("/", handler.NotFoundHandler)
 
 	return mux
