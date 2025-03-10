@@ -2,11 +2,10 @@ package utils
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"os"
 
 	"commenter/pkg/apperrors"
+	"commenter/pkg/logger"
 )
 
 func ResponseErrorJson(err error, w http.ResponseWriter) {
@@ -23,8 +22,7 @@ func ResponseErrorJson(err error, w http.ResponseWriter) {
 		// 	statusCode = http.StatusBadRequest // 400
 	}
 
-	log.SetOutput(os.Stderr)
-	log.Println(err)
+	logger.LogError(err)
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(statusCode)

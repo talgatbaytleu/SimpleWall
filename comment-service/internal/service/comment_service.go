@@ -1,9 +1,14 @@
 package service
 
 import (
+	"context"
 	"encoding/json"
+	"fmt"
 	"io"
 	"strconv"
+	"time"
+
+	"github.com/segmentio/kafka-go"
 
 	"commenter/internal/dal"
 	"commenter/pkg/apperrors"
@@ -16,6 +21,7 @@ type CommentServiceInterface interface {
 	GetCommentById(comment_idStr string) (string, error)
 	GetPostComments(post_idStr string) (string, error)
 	DeleteComment(comment_idStr string, user_idStr string) error
+	SendNotification(body io.Reader, user_idStr string) error
 }
 
 type commentService struct {
@@ -115,4 +121,41 @@ func (s *commentService) DeleteComment(comment_idStr string, user_idStr string) 
 	}
 
 	return s.commentDal.DeleteComment(comment_id, user_id)
+}
+
+func (s *commentService) SendNotification(body io.Reader, user_idStr string) error {
+	var comment models.CommentType
+
+	post_idStr := strconv.Itoa(comment.CommentID)
+
+	err := json.NewDecoder(body).Decode(&comment)
+	if err != nil {
+		return err
+	}
+
+	kafkaWriter := kafka.NewWriter(kafka.WriterConfig{
+		Brokers:  []string{"kafka:9092"},
+		Topic:    "comments-notifications",
+		Balancer: &kafka.LeastBytes{},
+	})
+
+	defer kafkaWriter.Close()
+
+	message := fmt.Sprintf(
+		"User %s commented on post %d: %s",
+		user_idStr,
+		comment.PostID,
+		comment.Content,
+	)
+
+	err = kafkaWriter.WriteMessages(context.Background(), kafka.Message{
+		Key:   []byte(post_idStr),
+		Value: []byte(message),
+		Time:  time.Now(),
+	})
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

@@ -6,6 +6,7 @@ import (
 
 	"commenter/internal/service"
 	"commenter/pkg/apperrors"
+	"commenter/pkg/logger"
 	"commenter/pkg/utils"
 )
 
@@ -25,6 +26,14 @@ func (h *commentHandler) PostComment(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("CreateComment: " + user_idStr + ": successful")
+
+	err = h.commentService.SendNotification(r.Body, user_idStr)
+	if err != nil {
+		utils.ResponseErrorJson(err, w)
+		return
+	}
+	logger.LogMessage("SendNotification: " + user_idStr + ": successful")
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -42,6 +51,7 @@ func (h *commentHandler) PutComment(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("UpdateComment: " + user_idStr + ": successful")
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -58,6 +68,7 @@ func (h *commentHandler) GetComment(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("GetCommentById: " + comment_idStr + ": successful")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jsonComment)
@@ -75,6 +86,7 @@ func (h *commentHandler) GetComments(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("GetPostComments: " + post_idStr + ": successful")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jsonComment)
@@ -92,6 +104,7 @@ func (h *commentHandler) DeleteComment(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("DeleteComment: " + comment_idStr + ": successful")
 
 	w.WriteHeader(http.StatusNoContent)
 }
