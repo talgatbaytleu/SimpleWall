@@ -7,6 +7,7 @@ import (
 
 	"wall/internal/ports"
 	"wall/pkg/apperrors"
+	"wall/pkg/logger"
 	"wall/pkg/utils"
 )
 
@@ -35,6 +36,7 @@ func (h *wallHandler) GetUserWall(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("GetUserWall: GetUserWall: successful")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jsonWall)
