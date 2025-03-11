@@ -3,9 +3,10 @@ package service
 import (
 	"io"
 	"net/http"
+	"os"
 )
 
-var s3url = "http://localhost:8086/" // SHOULD BE IN .env!!!
+var s3url = "http://" + os.Getenv("S3_SERVICE_ADDR") + "/"
 
 func SendRequest(method string, reqURL *string, body io.Reader) (*http.Response, error) {
 	req, err := http.NewRequest(method, *reqURL, body)
