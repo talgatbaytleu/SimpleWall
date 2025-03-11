@@ -2,12 +2,11 @@ package handler
 
 import (
 	"encoding/json"
-	"log"
 	"net/http"
-	"os"
 	"strings"
 
 	"auth-service/internal/logic"
+	"auth-service/pkg/logger"
 	"auth-service/pkg/utils"
 )
 
@@ -26,8 +25,8 @@ func (h *userHandler) RegistrateUser(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.SetOutput(os.Stdout)
-	log.Println("User seccessfully registrated")
+	logger.LogMessage("User seccessfully registrated")
+
 	w.WriteHeader(200)
 }
 
@@ -41,8 +40,8 @@ func (h *userHandler) LoginUser(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
 
-	log.SetOutput(os.Stdout)
-	log.Println("User successfully logged in")
+	logger.LogMessage("User successfully logged in")
+
 	json.NewEncoder(w).Encode(map[string]string{"token": token})
 }
 
@@ -56,8 +55,8 @@ func (h *userHandler) CheckToken(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	log.SetOutput(os.Stdout)
-	log.Println("Token successfully checked")
+	logger.LogMessage("Token successfully checked")
+
 	w.Header().Set("X-User-ID", user_id)
 	w.WriteHeader(200)
 }

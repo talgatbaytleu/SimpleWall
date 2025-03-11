@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	"auth-service/internal/dal"
-	"auth-service/internal/handler"
 	"auth-service/internal/middleware"
+	"auth-service/internal/router"
+	"auth-service/pkg/logger"
 )
 
 func main() {
@@ -15,13 +15,11 @@ func main() {
 }
 
 func Run() {
-	dbURL := "postgres://tbaitleu:talgat9595@localhost:5432/sw_users_auth"
-
-	dal.InitDB(dbURL)
+	dal.InitDB()
 	defer dal.CloseDB()
 
-	mux := handler.InitServer()
+	mux := router.InitServer()
 
-	fmt.Println("Server started on port: 8081")
-	log.Fatal(http.ListenAndServe(":8081", middleware.RecoverMiddleware(mux)))
+	logger.LogMessage("Server started on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", middleware.RecoverMiddleware(mux)))
 }
