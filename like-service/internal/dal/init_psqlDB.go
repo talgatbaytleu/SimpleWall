@@ -6,6 +6,8 @@ import (
 	"os"
 
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"liker/pkg/logger"
 )
 
 var (
@@ -14,7 +16,8 @@ var (
 	ctx    = context.Background()
 )
 
-func InitDB(dbURL string) {
+func InitDB() {
+	dbURL := os.Getenv("SW_PSQL_POSTS")
 	var err error
 	MainDB, err = pgxpool.New(ctx, dbURL)
 	if err != nil {
@@ -25,8 +28,7 @@ func InitDB(dbURL string) {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
 
-	log.SetOutput(os.Stdout)
-	log.Println("Connected to database successfully!")
+	logger.LogMessage("Connected to database successfully!")
 }
 
 func CloseDB() {
@@ -39,8 +41,7 @@ func InitTestDB(dbURL string) {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
-	log.SetOutput(os.Stdout)
-	log.Println("Connected to database successfully!")
+	logger.LogMessage("Connected to database successfully!")
 }
 
 func CloseTestDB() {

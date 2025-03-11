@@ -6,6 +6,7 @@ import (
 
 	"liker/internal/service"
 	"liker/pkg/apperrors"
+	"liker/pkg/logger"
 	"liker/pkg/models"
 	"liker/pkg/utils"
 )
@@ -40,6 +41,8 @@ func (h *likeHandler) PostLike(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logger.LogMessage("PostLike: ToLike: successful")
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -61,6 +64,7 @@ func (h *likeHandler) GetLikesCount(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logger.LogMessage("GetLikesCount: GetLikesCount: successful")
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jsonData)
 }
@@ -82,6 +86,7 @@ func (h *likeHandler) GetLikesList(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
+	logger.LogMessage("GetLikesList: GetLikesList: successful")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jsonData)
@@ -107,5 +112,6 @@ func (h *likeHandler) DeleteLike(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	logger.LogMessage("DeleteLike: DeleteLike: successful")
 	w.WriteHeader(http.StatusNoContent)
 }
