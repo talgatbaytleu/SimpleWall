@@ -2,6 +2,7 @@ package service
 
 import (
 	"context"
+	"os"
 
 	"github.com/segmentio/kafka-go"
 
@@ -18,8 +19,9 @@ func NewConsumeKafkaService(notificationDal dal.NotificationDalInterface) *Consu
 }
 
 func (s *ConsumeKafkaService) ConsumeKafkaMessages(ctx context.Context) {
+	kafkaURL := os.Getenv("KAFKA_ADDR")
 	r := kafka.NewReader(kafka.ReaderConfig{
-		Brokers: []string{"localhost:9092"},
+		Brokers: []string{kafkaURL},
 		Topic:   "comments-notifications",
 		GroupID: "notification-service",
 	})
