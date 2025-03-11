@@ -10,7 +10,8 @@ CREATE TABLE posts (
 CREATE TABLE comments (
     comment_id SERIAL PRIMARY KEY,
     post_id INT NOT NULL REFERENCES posts(post_id) ON DELETE CASCADE,
-    content VARCHAR(500) NOT NULL
+    content VARCHAR(500) NOT NULL,
+    user_id INT NOT NULL
 );
 
 -- 3. Create the likes table
