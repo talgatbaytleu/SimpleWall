@@ -2,7 +2,6 @@ package main
 
 import (
 	"context"
-	"fmt"
 	"log"
 	"net/http"
 
@@ -10,12 +9,11 @@ import (
 	"notifier/internal/middleware"
 	"notifier/internal/router"
 	"notifier/internal/service"
+	"notifier/pkg/logger"
 )
 
 func main() {
-	dbURL := "postgres://tbaitleu:talgat9595@localhost:5432/sw_posts_db"
-
-	dal.InitDB(dbURL)
+	dal.InitDB()
 	defer dal.CloseDB()
 
 	mux := router.InitServer()
@@ -23,6 +21,6 @@ func main() {
 	consumerKafka := service.NewConsumeKafkaService(dal.MainDB)
 	go consumerKafka.ConsumeKafkaMessages(context.Background())
 
-	fmt.Println("Server started on port: 8087")
-	log.Fatal(http.ListenAndServe(":8087", middleware.RecoverMiddleware(mux)))
+	logger.LogMessage("Server started on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", middleware.RecoverMiddleware(mux)))
 }
