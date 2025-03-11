@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"poster/internal/service"
+	"poster/pkg/logger"
 	"poster/pkg/utils"
 )
 
@@ -29,6 +30,8 @@ func (h *postHandler) PostPost(w http.ResponseWriter, r *http.Request) {
 		utils.ResponseErrorJson(err, w)
 	}
 
+	logger.LogMessage("PostPost: CreatePost: successful")
+
 	w.WriteHeader(http.StatusOK)
 }
 
@@ -49,6 +52,7 @@ func (h *postHandler) PutPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.ResponseErrorJson(err, w)
 	}
+	logger.LogMessage("PutPost: UpdatePost: successful")
 
 	w.WriteHeader(http.StatusOK)
 }
@@ -63,6 +67,7 @@ func (h *postHandler) GetPost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.ResponseErrorJson(err, w)
 	}
+	logger.LogMessage("GetPost: RetrievePost: successful")
 
 	w.Header().Set("Content-Type", "application/json")
 	json.NewEncoder(w).Encode(jsonData)
@@ -79,6 +84,7 @@ func (h *postHandler) DeletePost(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
 		utils.ResponseErrorJson(err, w)
 	}
+	logger.LogMessage("DeletePost: RemovePost: successful")
 
 	w.WriteHeader(http.StatusNoContent)
 }
