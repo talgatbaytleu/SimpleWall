@@ -25,6 +25,8 @@ func InitServer() *http.ServeMux {
 	mux.HandleFunc("/comments", handler.HandleCommentService)
 	// Wall-service routes
 	mux.HandleFunc("/wall", handler.HandleWallService)
+	// Notification-service routes
+	mux.HandleFunc("/notification", handler.HandleNotificationService)
 
 	// Not Allowed Routes
 	mux.HandleFunc("/", handler.NotFoundHandler)

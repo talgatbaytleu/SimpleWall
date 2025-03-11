@@ -2,10 +2,11 @@ package service
 
 import (
 	"net/http"
+	"os"
 )
 
 func AuthValidateRequest(headers http.Header) (*http.Response, error) {
-	authURL := "http://localhost:8081/validate"
+	authURL := os.Getenv("AUTH_SERVICE_ADDR") + "/validate"
 
 	req, err := http.NewRequest("GET", authURL, nil)
 	if err != nil {
