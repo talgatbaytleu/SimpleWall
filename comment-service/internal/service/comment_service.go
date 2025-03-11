@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"io"
+	"os"
 	"strconv"
 	"time"
 
@@ -125,6 +126,7 @@ func (s *commentService) DeleteComment(comment_idStr string, user_idStr string) 
 
 func (s *commentService) SendNotification(body io.Reader, user_idStr string) error {
 	var comment models.CommentType
+	kafkaURL := os.Getenv("KAFKA_ADDR")
 
 	post_idStr := strconv.Itoa(comment.CommentID)
 
@@ -134,7 +136,7 @@ func (s *commentService) SendNotification(body io.Reader, user_idStr string) err
 	}
 
 	kafkaWriter := kafka.NewWriter(kafka.WriterConfig{
-		Brokers:  []string{"kafka:9092"},
+		Brokers:  []string{kafkaURL},
 		Topic:    "comments-notifications",
 		Balancer: &kafka.LeastBytes{},
 	})
