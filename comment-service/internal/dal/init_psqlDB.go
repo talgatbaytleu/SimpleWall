@@ -14,7 +14,8 @@ var (
 	ctx    = context.Background()
 )
 
-func InitDB(dbURL string) {
+func InitDB() {
+	dbURL := os.Getenv("SW_PSQL_POSTS")
 	var err error
 	MainDB, err = pgxpool.New(ctx, dbURL)
 	if err != nil {
