@@ -1,9 +1,11 @@
 version: "3.8"
 
 services:
-  # Auth
+  # Triple-s
   triple-s:
     build: ./triple-s
+    ports:
+      - "8086:8080"
     env_file:
       - ./triple-s/example.env
     networks:
@@ -13,7 +15,7 @@ services:
   gateway-service:
     build: ./gateway-service
     ports:
-      - "8080:8080"  # Открываем порт наружу
+      - "8080:8080" 
     env_file:
       - ./gateway-service/example.env
     depends_on:
@@ -23,10 +25,14 @@ services:
       - like-service
       - wall-service
       - notification-service
+    networks:
+        - backend
 
   # Auth
   auth-service:
     build: ./auth-service
+    ports:
+      - "8081:8080"
     env_file:
       - ./auth-service/example.env
     depends_on:
@@ -37,6 +43,8 @@ services:
   # Comment
   comment-service:
     build: ./comment-service
+    ports:
+      - "8083:8080"
     env_file:
       - ./comment-service/example.env
     depends_on:
@@ -48,6 +56,8 @@ services:
   # Post
   post-service:
     build: ./post-service
+    ports:
+      - "8082:8080"
     env_file:
       - ./post-service/example.env
     depends_on:
@@ -59,6 +69,8 @@ services:
   # Like
   like-service:
     build: ./like-service
+    ports:
+      - "8084:8080"
     env_file:
       - ./like-service/example.env
     depends_on:
@@ -69,6 +81,8 @@ services:
   # Wall
   wall-service:
     build: ./wall-service
+    ports:
+      - "8085:8080"
     env_file:
       - ./wall-service/example.env
     depends_on:
@@ -80,6 +94,8 @@ services:
   # Notification
   notification-service:
     build: ./notification-service
+    ports:
+      - "8087:8080"
     env_file:
       - ./notification-service/example.env
     depends_on:

@@ -1,13 +1,13 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
 	"liker/internal/dal"
 	"liker/internal/middleware"
 	"liker/internal/router"
+	"liker/pkg/logger"
 )
 
 func main() {
@@ -16,6 +16,6 @@ func main() {
 
 	mux := router.InitServer()
 
-	fmt.Println("Server started on port: 8083")
-	log.Fatal(http.ListenAndServe(":8083", middleware.RecoverMiddleware(mux)))
+	logger.LogMessage("Server started on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", middleware.RecoverMiddleware(mux)))
 }

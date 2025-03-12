@@ -1,7 +1,9 @@
 package handler
 
 import (
+	"bytes"
 	"encoding/json"
+	"io"
 	"net/http"
 
 	"commenter/internal/service"
@@ -21,14 +23,20 @@ func NewCommentHandler(commentService service.CommentServiceInterface) *commentH
 func (h *commentHandler) PostComment(w http.ResponseWriter, r *http.Request) {
 	user_idStr := r.Header.Get("X-User-ID")
 
-	err := h.commentService.CreateComment(r.Body, user_idStr)
+	bodyBytes, err := io.ReadAll(r.Body)
+	if err != nil {
+		utils.ResponseErrorJson(err, w)
+		return
+	}
+
+	err = h.commentService.CreateComment(bytes.NewReader(bodyBytes), user_idStr)
 	if err != nil {
 		utils.ResponseErrorJson(err, w)
 		return
 	}
 	logger.LogMessage("CreateComment: " + user_idStr + ": successful")
 
-	err = h.commentService.SendNotification(r.Body, user_idStr)
+	err = h.commentService.SendNotification(bytes.NewReader(bodyBytes), user_idStr)
 	if err != nil {
 		utils.ResponseErrorJson(err, w)
 		return

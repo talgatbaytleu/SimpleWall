@@ -8,4 +8,4 @@ RUN go build -o auth-service
 
 EXPOSE 8080
 
-CMD ["./gateway-service"]
+CMD ["./auth-service"]

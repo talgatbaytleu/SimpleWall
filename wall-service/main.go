@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 
@@ -9,18 +8,17 @@ import (
 	redisadapter "wall/internal/adapters/driven-adapters/redis-adapter"
 	"wall/internal/middleware"
 	"wall/internal/router"
+	"wall/pkg/logger"
 )
 
 func main() {
-	dbURL := "postgres://tbaitleu:talgat9595@localhost:5432/sw_posts_db"
-
-	psqladapter.InitDB(dbURL)
+	psqladapter.InitDB()
 	defer psqladapter.CloseDB()
 
 	redisadapter.InitRedis()
 
 	mux := router.InitServer()
 
-	fmt.Println("Server started on port: 8085")
-	log.Fatal(http.ListenAndServe(":8085", middleware.RecoverMiddleware(mux)))
+	logger.LogMessage("Server started on port: 8080")
+	log.Fatal(http.ListenAndServe(":8080", middleware.RecoverMiddleware(mux)))
 }
