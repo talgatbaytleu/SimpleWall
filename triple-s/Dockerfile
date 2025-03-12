@@ -8,4 +8,4 @@ RUN go build -o triple-s
 
 EXPOSE 8080
 
-CMD ["./triple-s"]
+CMD ["./triple-s -dir data -port 8080"]
