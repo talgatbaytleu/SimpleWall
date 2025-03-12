@@ -18,6 +18,7 @@ func InitServer() *http.ServeMux {
 	// Like-service routes
 	mux.HandleFunc("/like", handler.HandleLikeService)
 	mux.HandleFunc("/like/{pattern}", handler.HandleLikeService)
+	mux.HandleFunc("/likes", handler.HandleLikeService)
 	mux.HandleFunc("/likes/{pattern}", handler.HandleLikeService)
 	// Comment-service routes
 	mux.HandleFunc("/comment", handler.HandleCommentService)
