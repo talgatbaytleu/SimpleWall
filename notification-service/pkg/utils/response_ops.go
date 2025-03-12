@@ -6,7 +6,7 @@ import (
 	"net/http"
 	"os"
 
-	"liker/pkg/apperrors"
+	"notifier/pkg/apperrors"
 )
 
 func ResponseErrorJson(err error, w http.ResponseWriter) {
