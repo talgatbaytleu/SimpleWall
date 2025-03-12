@@ -11,9 +11,7 @@ import (
 )
 
 func main() {
-	dbURL := "postgres://tbaitleu:talgat9595@localhost:5432/sw_posts_db"
-
-	dal.InitDB(dbURL)
+	dal.InitDB()
 	defer dal.CloseDB()
 
 	mux := router.InitServer()
