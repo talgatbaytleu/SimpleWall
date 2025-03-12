@@ -23,6 +23,10 @@ func InitDB() {
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
+	err = MainDB.Ping(ctx)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
 
 	logger.LogMessage("Connected to database successfully!")
 }
@@ -34,6 +38,10 @@ func CloseDB() {
 func InitTestDB(dbURL string) {
 	var err error
 	TestDB, err = pgxpool.New(ctx, dbURL)
+	if err != nil {
+		log.Fatalf("Unable to connect to database: %v\n", err)
+	}
+	err = MainDB.Ping(ctx)
 	if err != nil {
 		log.Fatalf("Unable to connect to database: %v\n", err)
 	}
