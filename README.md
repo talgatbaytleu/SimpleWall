@@ -1,68 +1,71 @@
-# SimpleWall — микросервисная платформа для публикации и взаимодействия с контентом
+# SimpleWall — A Microservices Platform for Content Sharing and Interaction
 
-SimpleWall — это backend-платформа, позволяющая пользователям делиться фотографиями, взаимодействовать с контентом и отслеживать активность.
+SimpleWall is a backend platform that allows users to share photos, interact with content, and track activity.
 
-## Основные возможности:
-- Регистрация и публикация постов с описанием
-- Редактирование и удаление своих постов
-- Просмотр всех постов
-- Лайки и дизлайки для любого поста
-- Отображение количества лайков и списка лайкеров
-- Комментирование постов и отправка уведомлений на фронтенд
-- Редактирование и удаление своих комментариев
-- Просмотр конкретного комментария или списка комментариев к посту
-- Получение списка всех постов пользователя с подсчетом лайков и комментариев
+## Key Features:
+- User registration and post publishing with descriptions
+- Editing and deleting own posts
+- Viewing all posts
+- Liking and unliking posts
+- Displaying the number of likes and list of likers
+- Commenting on posts and sending notifications to the frontend
+- Editing and deleting own comments
+- Viewing a specific comment or a list of comments for a post
+- Retrieving a list of all user posts with a count of likes and comments
 
-Проект построен на основе микросервисной архитектуры и не включает frontend, предоставляя HTTP API для работы с данными.
+The project is based on a microservices architecture and does not include a frontend. It provides an HTTP API for data interaction.
 
-## Структура проекта
-Приложение состоит из 7 микросервисов, каждый из которых выполняет свою функцию:
-.![SimpleWall-diagram](https://github.com/user-attachments/assets/6d823b5a-e715-4c29-8136-3ff4d1c79368)
-- **Gateway** — маршрутизация запросов (монолит архитектура).
-- **Auth** — аутентификация пользователей с JWT-токенами (трехслойная архитектура)
-- **Post** — управление постами (трехслойная архитектура).
-- **Like** — обработка лайков и дизлайков (трехслойная архитектура).
-- **Comment** — управление комментариями (трехслойная архитектура).
-- **Wall** — сборка ленты новостей (hexagonal архитектура).
-- **Notification** — уведомления (трехслойная архитектура).
+## Project Structure
+The application consists of 7 microservices, each serving a specific function:
 
-### Эндпоинты
+![SimpleWall-diagram](https://github.com/user-attachments/assets/6d823b5a-e715-4c29-8136-3ff4d1c79368)
+
+- **Gateway** — Request routing (monolithic architecture).
+- **Auth** — User authentication with JWT tokens (three-tier architecture).
+- **Post** — Post management (three-tier architecture).
+- **Like** — Processing likes and unlikes (three-tier architecture).
+- **Comment** — Comment management (three-tier architecture).
+- **Wall** — News feed assembly (hexagonal architecture).
+- **Notification** — Notifications (three-tier architecture).
+
+### Endpoints
 
 ***auth-service:***
-- **POST /register** – Регистрация нового пользователя.
-- **POST /login** – Вход для получения токена.
-- **POST /validate** – Проверка токена.
+- **POST /register** – Register a new user.
+- **POST /login** – Login to receive a token.
+- **POST /validate** – Validate a token.
 
 ***post-service:***
-- **POST /post** – Выложить пост.
-- **GET /post/{post_id}** – Получить пост по `post_id`.
-- **DELETE /post/{post_id}** – Удалить пост по `post_id` (если владелец – вы).
-- **PUT /post/{post_id}** – Редактировать пост по `post_id` (если владелец – вы).
+- **POST /post** – Publish a post.
+- **GET /post/{post_id}** – Retrieve a post by `post_id`.
+- **DELETE /post/{post_id}** – Delete a post by `post_id` (if you are the owner).
+- **PUT /post/{post_id}** – Edit a post by `post_id` (if you are the owner).
 
 ***like-service:***
-- **POST /like** – Лайкнуть пост, `post_id` которого указан в теле.
-- **GET /likes/count?post_id={post_id}** – Получить количество лайков по `post_id`.
-- **GET /likes?post_id={post_id}** – Получить список лайкеров по `post_id`.
-- **DELETE /like** – Анлайкнуть пост, `post_id` которого указан в теле.
+- **POST /like** – Like a post, `post_id` is specified in the request body.
+- **GET /likes/count?post_id={post_id}** – Retrieve the number of likes for `post_id`.
+- **GET /likes?post_id={post_id}** – Retrieve the list of likers for `post_id`.
+- **DELETE /like** – Unlike a post, `post_id` is specified in the request body.
 
 ***comment-service:***
-- **POST /comment** – Написать комментарий к посту, `post_id` которого указан в теле.
-- **PUT /comment/{comment_id}** – Редактировать комментарий по `comment_id` (если владелец – вы).
-- **DELETE /comment/{comment_id}** – Удалить комментарий по `comment_id` (если владелец – вы).
-- **GET /comment/{comment_id}** – Получить комментарий по `comment_id`.
-- **GET /comments?post_id={post_id}** – Получить список комментариев по `post_id`.
+- **POST /comment** – Write a comment for a post, `post_id` is specified in the request body.
+- **PUT /comment/{comment_id}** – Edit a comment by `comment_id` (if you are the owner).
+- **DELETE /comment/{comment_id}** – Delete a comment by `comment_id` (if you are the owner).
+- **GET /comment/{comment_id}** – Retrieve a comment by `comment_id`.
+- **GET /comments?post_id={post_id}** – Retrieve a list of comments for `post_id`.
 
 ***wall-service:***
-- **GET /wall?user_id={user_id}** – Получить стену постов пользователя по `user_id`.
+- **GET /wall?user_id={user_id}** – Retrieve the user's post feed by `user_id`.
 
-### Используемые технологии
-- **PostgreSQL** — используется две базы данных:
-  - `sw_users_auth` для аутентификации.
-  - `sw_posts_db` для хранения постов, лайков и комментариев.
+### Technologies Used
+- **PostgreSQL** — Two databases are used:
+  - `sw_users_auth` for authentication.
+  - `sw_posts_db` for storing posts, likes, and comments.
+
 ![ERD_for_SW](https://github.com/user-attachments/assets/1a3a3ade-e438-482f-9f0b-aa546c6fcf43)
-- **Redis** — кэширование для быстрой загрузки ленты (Wall).
-- **Kafka** — передача сообщений (`comment-kafka-notification`).
-- **Прототип S3** — собственная (очень плохая, но рабочая) реализация хранилища бинарных файлов.
-- **Docker** — все сервисы разворачиваются в контейнерах.
-- **Git** — разработка велась через отдельные ветки, имитируя реальную работу в команде.
 
+- **Redis** — Caching for fast feed loading (Wall service).
+- **Kafka** — Message transmission (`comment-kafka-notification`).
+- **S3 Prototype** — A custom (poor but functional) implementation of a binary file storage system.
+- **Docker** — All services are deployed in containers.
+- **Git** — Development was done through separate branches, simulating real team collaboration.
