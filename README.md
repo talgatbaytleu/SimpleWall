@@ -1,5 +1,6 @@
+🇷🇺 [Русская версия](https://github.com/talgatbaytleu/SimpleWall/blob/docs/rus/README_RUS.md)
 # SimpleWall — A Microservices Platform for Content Sharing and Interaction
-🇷🇺 [Русская версия]([README.md](https://github.com/talgatbaytleu/SimpleWall/blob/docs/rus/README_RUS.md))
+
 
 SimpleWall is a backend platform that allows users to share photos, interact with content, and track activity.
 
